@@ -1,3 +1,3 @@
 ### Hi there 👋
 
-![hyp3rflow's solved.ac stats](https://github-readme-solvedac.hyp3rflow.vercel.app/api/?handle=jry9913)
+[![Solved.ac 프로필](http://mazassumnida.wtf/api/generate_badge?boj=jry9913)](https://solved.ac/jry9913)
