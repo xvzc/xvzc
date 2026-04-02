@@ -1,2 +1,2 @@
 
-![xvzc's GitHub stats](https://github-readme-stats.vercel.app/api?username=xvzc&count_private=true&theme=gruvbox)
+![xvzc's GitHub stats](https://raw.githubusercontent.com/xvzc/xvzc/deploy/stats.svg)

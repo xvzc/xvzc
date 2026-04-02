@@ -1,0 +1,14 @@
+{
+  "name": "xvzc-svg-generator",
+  "version": "1.0.0",
+  "description": "Standalone SVG generator using github-readme-stats layouts",
+  "type": "module",
+  "dependencies": {
+    "axios": "^1.14.0",
+    "dotenv": "^17.4.0",
+    "emoji-name-map": "^2.0.3",
+    "github-username-regex": "^1.0.0",
+    "graphql": "^16.13.2",
+    "word-wrap": "^1.2.5"
+  }
+}

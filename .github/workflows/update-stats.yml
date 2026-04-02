@@ -1,0 +1,55 @@
+name: Generate SVG
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-stats.yml'
+      - 'generate-svg.js'
+      - 'src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate SVG
+        run: node generate-svg.js
+        env:
+          PAT_1: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to deploy branch
+        run: |
+          mkdir -p deploy_output
+          mv stats.svg deploy_output/
+          
+          cd deploy_output
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b deploy
+          
+          git add stats.svg
+          git commit -m "chore: update stats.svg"
+          
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          git push -f origin deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
