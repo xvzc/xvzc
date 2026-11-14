@@ -1,4 +1,4 @@
-name: Generate SVG
+name: Update Stats SVG
 
 on:
   schedule:
@@ -9,46 +9,31 @@ on:
       - main
     paths:
       - '.github/workflows/update-stats.yml'
-      - 'generate-svg.js'
-      - 'src/**'
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      STATS_URL: 'https://github-stats-extended.vercel.app/api?username=xvzc&rank_icon=percentile&hide_title=true&show_icons=true&include_all_commits=true&theme=gruvbox'
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate SVG
-        run: node generate-svg.js
-        env:
-          PAT_1: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push to deploy branch
+      - name: Fetch stats SVG
         run: |
           mkdir -p deploy_output
-          mv stats.svg deploy_output/
-          
-          cd deploy_output
+          curl -fsSL --retry 3 --retry-delay 5 -o deploy_output/stats.svg "$STATS_URL"
+          # Fail instead of publishing an error page
+          grep -q '<svg' deploy_output/stats.svg
+
+      - name: Push to deploy branch
+        working-directory: deploy_output
+        run: |
           git init
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b deploy
-          
           git add stats.svg
           git commit -m "chore: update stats.svg"
-          
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
           git push -f origin deploy
         env:
